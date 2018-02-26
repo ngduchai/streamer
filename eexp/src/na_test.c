@@ -197,6 +197,9 @@ na_test_mpi_init(struct na_test_info *na_test_info)
             int mpi_ret, color, global_rank;
 
             MPI_Comm_rank(MPI_COMM_WORLD, &global_rank);
+            if (global_rank == 0) {
+		na_test_info->listen = NA_TRUE;
+	    }
             /* Color is 1 for server, 2 for client */
             color = (na_test_info->listen) ? 1 : 2;
 
