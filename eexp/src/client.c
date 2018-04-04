@@ -219,8 +219,8 @@ main(int argc, char *argv[])
 			fflush(stdout);
 		}
 
-		//for (size = 512 * 1024 * 1024; size <= MAX_MSG_SIZE; size *= 2)
-		for (size = 1; size <= 512 * 1024 * 1024; size *= 2)
+		for (size = 512 * 1024 * 1024; size <= MAX_MSG_SIZE; size *= 2)
+		//for (size = 1; size <= 512 * 1024 * 1024; size *= 2)
 			measure_bulk_transfer(&hg_test_info, size, nhandles);
 
 		fprintf(stdout, "\n");

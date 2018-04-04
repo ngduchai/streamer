@@ -22,7 +22,7 @@
 /* Local Macros */
 /****************/
 #define PIPELINE_SIZE 4
-#define MIN_BUFFER_SIZE (1 << 24) //(2 << 15) /* 11 Stop at 4KB buffer size */
+#define MIN_BUFFER_SIZE (1 << 16) //(2 << 15) /* 11 Stop at 4KB buffer size */
 #define MERCURY_TESTING_MAX_LOOP 10
 
 #ifdef MERCURY_TESTING_HAS_THREAD_POOL
@@ -345,8 +345,8 @@ hg_test_pipeline_transfer_cb(const struct hg_cb_info *hg_cb_info)
 		if (ret != HG_SUCCESS) {
 			fprintf(stderr, "Could clean handle\n");
 		}
-		HG_Bulk_free(pl->local_bulk_handle);
-		free(pl->buf);
+		//HG_Bulk_free(pl->local_bulk_handle);
+		//free(pl->buf);
 		free(pl);
     	}else if (pl->next_pipeline <= pl->num_pipeline) {
 		size_t chunk_size = pl->bulk_write_nbytes - pl->total_bytes_read;
@@ -374,10 +374,11 @@ hg_test_pipeline_transfer_cb(const struct hg_cb_info *hg_cb_info)
 	
 	hg_time_get_current(&t2);
 	time_read = hg_time_to_double(hg_time_subtract(t2, t1));
+	/*
 	printf("Num %d: Time: %f %f %f\n", offset,
 		hg_time_to_double(t1) - 27223000, hg_time_to_double(t2) - 27223000,
 		time_read);
-	
+	*/
 	return HG_SUCCESS;
 }
 
@@ -443,11 +444,12 @@ HG_TEST_RPC_CB(hg_test_pipeline_write, handle)
 
     /* Create a new block handle to read the data */
     args->bulk_write_nbytes = HG_Bulk_get_size(args->origin_bulk_handle);
-    //args->local_bulk_handle = args->hg_test_info->bulk_handle;   
+    args->local_bulk_handle = args->hg_test_info->bulk_handle;   
+	/*
     args->buf = malloc(args->bulk_write_nbytes);	
     HG_Bulk_create(args->hg_info->hg_class, 1, &args->buf, &args->bulk_write_nbytes,
             HG_BULK_READWRITE, &args->local_bulk_handle);
-
+	*/
     args->total_bytes_read = 0;
     args->chunk_size = MIN_BUFFER_SIZE;
     
@@ -482,7 +484,7 @@ HG_TEST_RPC_CB(hg_test_pipeline_write, handle)
        	    fprintf(stderr, "Could not read bulk data\n");
 	    return ret;
         }
-	printf("%d\n", args->write_offset);
+	//printf("%d\n", args->write_offset);
 	args->write_offset += args->chunk_size;
     	args->next_pipeline++;
     }

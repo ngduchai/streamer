@@ -74,17 +74,17 @@ main(int argc, char *argv[])
 	hg_time_t t1, t2;
 	
         do {
-	    hg_time_get_current(&t1);
-	    printf("Trigger\n");
+	    //hg_time_get_current(&t1);
+	    //printf("Trigger\n");
             ret = HG_Trigger(hg_test_info.context, 0, 1, &actual_count);
-	    hg_time_get_current(&t2);
-	    printf("Trigger %f\n", hg_time_to_double(hg_time_subtract(t2, t1)));
+	    //hg_time_get_current(&t2);
+	    //printf("Trigger %f\n", hg_time_to_double(hg_time_subtract(t2, t1)));
         } while ((ret == HG_SUCCESS) && actual_count);
 	/*
         if (hg_atomic_cas32(&hg_test_info.finalizing_count, 1, 1))
             break;
 	*/
-	printf("Progress\n");
+	//printf("Progress\n");
         /* Use same value as HG_TEST_TRIGGER_TIMEOUT for convenience */
         //ret = HG_Progress(hg_test_info.context, HG_TEST_TRIGGER_TIMEOUT);
         ret = HG_Progress(hg_test_info.context, HG_TEST_PROGRESS_TIMEOUT);

@@ -118,12 +118,13 @@ HG_TEST_RPC_CB(hg_test_perf_bulk, handle)
 #ifdef MERCURY_TESTING_HAS_THREAD_POOL
     hg_thread_mutex_lock(&hg_test_info->bulk_handle_mutex);
 #endif
-    //local_bulk_handle = hg_test_info->bulk_handle;
+    local_bulk_handle = hg_test_info->bulk_handle;
     hg_size_t size = HG_Bulk_get_size(origin_bulk_handle);
+	/*
     void * buf = malloc(size);
     ret = HG_Bulk_create(hg_info->hg_class, 1, &buf, &size,
 		HG_BULK_READWRITE, &local_bulk_handle);
-
+	*/
     /* Free input */
     HG_Bulk_ref_incr(origin_bulk_handle);
     HG_Free_input(handle, &in_struct);
@@ -212,12 +213,12 @@ hg_test_perf_bulk_transfer_cb(const struct hg_cb_info *hg_cb_info)
     hg_return_t ret = HG_SUCCESS;
 
 //#ifdef MERCURY_TESTING_HAS_VERIFY_DATA
-	/*
+	
     HG_Bulk_access(hg_cb_info->info.bulk.local_handle, 0,
         size, HG_BULK_READWRITE, 1, &buf, NULL, NULL);
-	*/
+	
     /* Check bulk buf */
-	/*
+	
     buf_ptr = (const char*) buf;
     for (i = 0; i < size; i++) {
         if (buf_ptr[i] != (char) i) {
@@ -226,7 +227,7 @@ hg_test_perf_bulk_transfer_cb(const struct hg_cb_info *hg_cb_info)
             break;
         }
     }
-	*/
+	
 //#endif
 
     /* Free origin handle */
@@ -243,8 +244,8 @@ hg_test_perf_bulk_transfer_cb(const struct hg_cb_info *hg_cb_info)
         goto done;
     }
     
-    HG_Bulk_free(hg_cb_info->info.bulk.local_handle);
-    free(buf);
+    //HG_Bulk_free(hg_cb_info->info.bulk.local_handle);
+    //free(buf);
 
 done:
     HG_Destroy(handle);

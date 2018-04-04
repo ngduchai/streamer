@@ -20,7 +20,8 @@
 #define MAX_MSG_SIZE (MERCURY_TESTING_BUFFER_SIZE * 1024 * 1024)
 #define MAX_HANDLES 16
 
-extern hg_id_t hg_test_perf_bulk_write_id_g;
+extern hg_id_t hg_test_pipeline_write_id_g;
+//extern hg_id_t hg_test_perf_bulk_write_id_g;
 
 struct hg_test_perf_args {
 	hg_request_t *request;
@@ -76,7 +77,8 @@ measure_bulk_transfer(struct hg_test_info *hg_test_info, size_t total_size,
 	handles = malloc(nhandles * sizeof(hg_handle_t));
 	for (i = 0; i < nhandles; i++) {
 		ret = HG_Create(hg_test_info->context, hg_test_info->target_addr,
-				hg_test_perf_bulk_write_id_g, &handles[i]);
+				hg_test_pipeline_write_id_g, &handles[i]);
+				//hg_test_perf_bulk_write_id_g, &handles[i]);
 		if (ret != HG_SUCCESS) {
 			fprintf(stderr, "Could not start call\n");
 			goto done;
