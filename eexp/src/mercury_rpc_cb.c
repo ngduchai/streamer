@@ -238,7 +238,7 @@ hg_test_perf_bulk_transfer_cb(const struct hg_cb_info *hg_cb_info)
 	FILE *f= fopen("comp-main", "a");
 	
 	double latency = comp_time * 1000 / comp_num;
-	fprintf(f, "server: %f\n", latency);
+	fprintf(f, "%d: %f\n", size, latency);
 	comp_num = 0;
 	comp_time = 0;
 	fclose(f);
