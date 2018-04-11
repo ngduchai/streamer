@@ -118,13 +118,11 @@ HG_TEST_RPC_CB(hg_test_perf_bulk, handle)
 #ifdef MERCURY_TESTING_HAS_THREAD_POOL
     hg_thread_mutex_lock(&hg_test_info->bulk_handle_mutex);
 #endif
-    local_bulk_handle = hg_test_info->bulk_handle;
+    //local_bulk_handle = hg_test_info->bulk_handle;
     hg_size_t size = HG_Bulk_get_size(origin_bulk_handle);
-	/*
     void * buf = malloc(size);
     ret = HG_Bulk_create(hg_info->hg_class, 1, &buf, &size,
 		HG_BULK_READWRITE, &local_bulk_handle);
-	*/
     /* Free input */
     HG_Bulk_ref_incr(origin_bulk_handle);
     HG_Free_input(handle, &in_struct);
@@ -199,6 +197,10 @@ HG_TEST_RPC_CB(hg_test_perf_bulk_read, handle)
 }
 
 /*---------------------------------------------------------------------------*/
+
+static double comp_time;
+static long comp_num = 0;
+
 static hg_return_t
 hg_test_perf_bulk_transfer_cb(const struct hg_cb_info *hg_cb_info)
 {
@@ -219,6 +221,8 @@ hg_test_perf_bulk_transfer_cb(const struct hg_cb_info *hg_cb_info)
 	
     /* Check bulk buf */
 	
+    hg_time_t t1, t2;
+    hg_time_get_current(&t1);
     buf_ptr = (const char*) buf;
     for (i = 0; i < size; i++) {
         if (buf_ptr[i] != (char) i) {
@@ -226,6 +230,18 @@ hg_test_perf_bulk_transfer_cb(const struct hg_cb_info *hg_cb_info)
                 "was expecting %d!\n", (int) i, (char) buf_ptr[i], (char) i);
             break;
         }
+    }
+    hg_time_get_current(&t2);
+    comp_time += hg_time_to_double(hg_time_subtract(t2, t1)); 
+    comp_num++;
+    if (comp_num == 1000) {
+	FILE *f= fopen("comp-main", "a");
+	
+	double latency = comp_time * 1000 / comp_num;
+	fprintf(f, "server: %f\n", latency);
+	comp_num = 0;
+	comp_time = 0;
+	fclose(f);
     }
 	
 //#endif
@@ -244,8 +260,8 @@ hg_test_perf_bulk_transfer_cb(const struct hg_cb_info *hg_cb_info)
         goto done;
     }
     
-    //HG_Bulk_free(hg_cb_info->info.bulk.local_handle);
-    //free(buf);
+    HG_Bulk_free(hg_cb_info->info.bulk.local_handle);
+    free(buf);
 
 done:
     HG_Destroy(handle);

@@ -345,8 +345,8 @@ hg_test_pipeline_transfer_cb(const struct hg_cb_info *hg_cb_info)
 		if (ret != HG_SUCCESS) {
 			fprintf(stderr, "Could clean handle\n");
 		}
-		//HG_Bulk_free(pl->local_bulk_handle);
-		//free(pl->buf);
+		HG_Bulk_free(pl->local_bulk_handle);
+		free(pl->buf);
 		free(pl);
     	}else if (pl->next_pipeline <= pl->num_pipeline) {
 		size_t chunk_size = pl->bulk_write_nbytes - pl->total_bytes_read;
@@ -444,12 +444,10 @@ HG_TEST_RPC_CB(hg_test_pipeline_write, handle)
 
     /* Create a new block handle to read the data */
     args->bulk_write_nbytes = HG_Bulk_get_size(args->origin_bulk_handle);
-    args->local_bulk_handle = args->hg_test_info->bulk_handle;   
-	/*
+    //args->local_bulk_handle = args->hg_test_info->bulk_handle;   
     args->buf = malloc(args->bulk_write_nbytes);	
     HG_Bulk_create(args->hg_info->hg_class, 1, &args->buf, &args->bulk_write_nbytes,
             HG_BULK_READWRITE, &args->local_bulk_handle);
-	*/
     args->total_bytes_read = 0;
     args->chunk_size = MIN_BUFFER_SIZE;
     
